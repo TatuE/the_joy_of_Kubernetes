@@ -1,4 +1,5 @@
-# the_joy_of_Kubernetes
+# The joy of Kubernetes
+
 A working repository for Haaga-Helia Cloud Services (ICT4HM101-3007) course project work.
 
 ## Project plan
