@@ -1,3 +1,4 @@
+```mermaid
 graph LR
     subgraph "Internet User"
         U["User Browser/Client"]
@@ -81,3 +82,4 @@ graph LR
     style LB_Echo fill:#ccf,stroke:#333,stroke-width:1px
     style LB_Traefik fill:#ccf,stroke:#333,stroke-width:1px
     style PV1 fill:#fcc,stroke:#333,stroke-width:1px
+```
