@@ -1,0 +1,83 @@
+graph LR
+    subgraph "Internet User"
+        U["User Browser/Client"]
+    end
+
+    subgraph "Hetzner Cloud Project"
+        FW("Hetzner Firewall")
+        subgraph "Hetzner Load Balancers"
+            LB_Nginx["Hetzner LB for Nginx"]
+            LB_Echo["Hetzner LB for Echo"]
+            LB_Traefik["Hetzner LB for Traefik"]
+        end
+        subgraph "Hetzner Private Network (k8s-net, 10.0.0.0/16)"
+            subgraph "k8s-control-plane-1 (Hetzner Server)"
+                K3S_Server["k3s Server - API etc."]
+                CCM["HCloud CCM Pod"]
+                CSI_Ctrl["HCloud CSI Ctrl Pod"]
+            end
+            subgraph "k8s-worker-1 (Hetzner Server)"
+                K3S_Agent1["k3s Agent"]
+                CSI_Node1["HCloud CSI Node Pod"]
+                subgraph "Pods on Worker 1"
+                    NginxPod1("Nginx Pod 1")
+                    RedisPod("Redis Pod") --- PV1[("Hetzner Volume via PVC")]
+                    EchoPod1("Echo Pod 1") --- CM1[("ConfigMap")]
+                    HelloAppPod("Hello App Pod")
+                end
+            end
+            subgraph "k8s-worker-2 (Hetzner Server)"
+                K3S_Agent2["k3s Agent"]
+                CSI_Node2["HCloud CSI Node Pod"]
+                 subgraph "Pods on Worker 2"
+                    NginxPod2("Nginx Pod 2")
+                    EchoPod2("Echo Pod 2") --- CM1
+                    HolaAppPod("Hola App Pod")
+                end
+            end
+        end
+        subgraph "Hetzner Volumes"
+            PV1
+        end
+        subgraph "Kubernetes Services/Ingress"
+            Svc_Nginx["Service: nginx-service<br>Type: LoadBalancer"]
+            Svc_Echo["Service: echo-service<br>Type: LoadBalancer"]
+            Svc_Redis["Service: redis-service<br>Type: ClusterIP"]
+            Svc_Hello["Service: hello-app-service<br>Type: ClusterIP"]
+            Svc_Hola["Service: hola-app-service<br>Type: ClusterIP"]
+            Ingress["Ingress: example-ingress<br>Controller: Traefik"]
+        end
+
+        %% Connections %%
+        U --> FW
+        FW --> LB_Nginx
+        FW --> LB_Echo
+        FW --> LB_Traefik
+
+        LB_Nginx --> Svc_Nginx
+        LB_Echo --> Svc_Echo
+        LB_Traefik --> Ingress
+
+        Svc_Nginx --> NginxPod1 & NginxPod2
+        Svc_Echo --> EchoPod1 & EchoPod2
+        RedisPod --> Svc_Redis
+
+        Ingress -- "/hello" --> Svc_Hello
+        Ingress -- "/hola" --> Svc_Hola
+        Svc_Hello --> HelloAppPod
+        Svc_Hola --> HolaAppPod
+
+        %% Control Plane / Node Communication %%
+        K3S_Server <--> K3S_Agent1 & K3S_Agent2
+        K3S_Server --- CCM & CSI_Ctrl & CSI_Node1 & CSI_Node2
+
+        %% Hetzner Integration %%
+        CCM --> LB_Nginx & LB_Echo & LB_Traefik
+        CSI_Ctrl & CSI_Node1 & CSI_Node2 --> PV1
+    end
+
+    style FW fill:#f9f,stroke:#333,stroke-width:2px
+    style LB_Nginx fill:#ccf,stroke:#333,stroke-width:1px
+    style LB_Echo fill:#ccf,stroke:#333,stroke-width:1px
+    style LB_Traefik fill:#ccf,stroke:#333,stroke-width:1px
+    style PV1 fill:#fcc,stroke:#333,stroke-width:1px
