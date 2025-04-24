@@ -9,4 +9,4 @@ The plan is to set up a Kubernetes cluster using k3s on Hetzner Cloud, deploy te
 
 *Note, the schematic is done using [mermaid](https://mermaid.js.org/)*
 
-{% include_relative Architecture/schematic.md %}
+[Hetzner Kubernetes schematic](Architecture/schematic.md)
