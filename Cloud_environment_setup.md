@@ -42,7 +42,7 @@ We started off by creating a new could project. I Hetzner this is quite straight
       * SSH (TCP/22 from your All IPV4 (Restrict to my IP in the future)) 
       * K8s API (TCP/6443 from your All IPV4 (Restrict to my IP in the future)) 
       * NodePorts (TCP/30000-32767 from All IPV4)
-      * k3s internal ports (UDP/8472, TCP/10250 from private network IPs)
+      * K3s internal ports (UDP/8472, TCP/10250 from private network IPs)
       * ICMP (from private network IPs).  
     * **Outbound Rules:** 
       * Allow all.  
@@ -52,7 +52,7 @@ We started off by creating a new could project. I Hetzner this is quite straight
 
 ## 3. Preparing Kubernetes deployment
 
-Install k3s in the k8s-control-plane-1 machine. 
+Install K3s in the k8s-control-plane-1 machine. 
 
 ```
 curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --flannel-iface=enp7s0 --node-ip="10.0.0.2" --node-external-ip=$(curl -4 ifconfig.me)" sh -s -
@@ -67,7 +67,7 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --flannel-iface=enp7s0 -
     * fail silently on server errors (-f)
     * follow redirects (-L)
 * INSTALL_K3S_EXEC
-  * Environment variable for k3s installation script downloaded
+  * Environment variable for K3s installation script downloaded
   * Server
     * Installs K3s in server (control-plane) mode
   * --flannel-iface=enp7s0
