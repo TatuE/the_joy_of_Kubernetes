@@ -25,28 +25,28 @@ We started off by creating a new could project. I Hetzner this is quite straight
 **Use Hetzner Cloud Console in the project**  
 
 1. **Create 3 Cloud Servers (1 control-plane, 2 workers)**
-     * **Location:** Helsinki (hel1)  
-     * **ISO Image:** Ubuntu 24.04  
-     * **Type:** CX22 (Intel, 2 vCPU:s, 4 GB RAM, 40 GB SSD, 20 TB Traffic)  
-     * **SSH Key:** Public key from project members computer  
-     * **Naming:** k8s-control-plane-1, k8s-worker-1,k8s-worker-2  
+    * **Location:** Helsinki (hel1)  
+    * **ISO Image:** Ubuntu 24.04  
+    * **Type:** CX22 (Intel, 2 vCPU:s, 4 GB RAM, 40 GB SSD, 20 TB Traffic)  
+    * **SSH Key:** Public key from project members computer  
+    * **Naming:** k8s-control-plane-1, k8s-worker-1,k8s-worker-2
 2. **Create Private Network:**
-   * Name: k8s-private-network
-   * IP range : 10.0.0.0/16   
-   * Attach all 3 servers.  
+  * **Name:** k8s-private-network
+  * **IP range:** 10.0.0.0/16
+  * Attach all 3 servers.
+    * **Note**, the servers have now an IP on a public and a private network, on two different interfaces.
 3. **Create Firewall:** 
-   * Name: k8s-firewall-1
-   * **Inbound Rules:** 
-     * Allow:
-       * SSH (TCP/22 from your All IPV4 (Restrict to my IP in the future)) 
-       * K8s API (TCP/6443 from your All IPV4 (Restrict to my IP in the future)) 
-       * NodePorts (TCP/30000-32767 from All IPV4)
-       * k3s internal ports (UDP/8472, TCP/10250 from private network IPs)
-       * ICMP (from private network IPs).  
-   * **Outbound Rules:** 
-     * Allow all.  
-   * Apply to all 3 servers.
-
+  * **Name:** k8s-firewall-1
+  * **Inbound Rules:** 
+    * Allow:
+      * SSH (TCP/22 from your All IPV4 (Restrict to my IP in the future)) 
+      * K8s API (TCP/6443 from your All IPV4 (Restrict to my IP in the future)) 
+      * NodePorts (TCP/30000-32767 from All IPV4)
+      * k3s internal ports (UDP/8472, TCP/10250 from private network IPs)
+      * ICMP (from private network IPs).  
+    * **Outbound Rules:** 
+      * Allow all.  
+    * Apply to all 3 servers.
 
 ![New project 1](Pictures/Hetzner_cloud/Hetzner_cloud_project_instances.png)
 
@@ -58,5 +58,24 @@ Install k3s in the k8s-control-plane-1 machine.
 curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --flannel-iface=enp7s0 --node-ip="10.0.0.2" --node-external-ip=$(curl -4 ifconfig.me)" sh -s -
 ```
 
-### Notes on shell script
+### Notes on shell script (Note piping "|")
 
+* ```curl -sfL https://get.k3s.io```
+  * This downloads the official K3s installation script from the internet
+  * Curl flags
+    * silent (-s)
+    * fail silently on server errors (-f)
+    * follow redirects (-L)
+* INSTALL_K3S_EXEC
+  * Environment variable for k3s installation script downloaded
+  * Server
+    * Installs K3s in server (control-plane) mode
+  * --flannel-iface=enp7s0
+    * Tells Flannel (the default CNI(Container Network Interface)) what network interface to use for cluster networking.
+      * In this case the interface is enp7s0
+  * --node-ip="10.0.0.2"
+    * Sets the internal IP address K3s advertises for this node
+  * --node-external-ip=$(curl -4 ifconfig.me)
+    * Sets the external IP address K3s advertises
+      * ```curl -4 ifconfig.me``` fetches the public IP address of the server.
+        * **Note**, -4 flag specifies IPV4 type address
