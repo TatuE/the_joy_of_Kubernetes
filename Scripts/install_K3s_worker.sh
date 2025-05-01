@@ -1,6 +1,6 @@
 #!/bin/bash
 CONTROL_PLANE_PRIVATE_IP="10.0.0.2" # Use the private IP of k8s-control-plane-1
-WORKER_IFACE="" # Add the interface to the Kubernetes network ( Note, that in our case, this is a private network)  
+WORKER_IFACE="enp7s0" # Add the interface to the Kubernetes network ( Note, that in our case, this is a private network)  
 K3S_TOKEN="" # Use the K3S token ("note-toke") from the control plane
 WORKER_PRIVATE_IP=$(ip -4 addr show ${WORKER_IFACE} | grep -oP '(?<=inet\s)\d+(\.\d+){3}') # Get the IPV address from the interface.
 
