@@ -3,12 +3,7 @@
 ## *Prerequisites*
 
 1. **Hetzner Cloud Account:** You need an active account 
-
-
-and a project set up.  
-2. **API Token:** Generate an API token within your Hetzner Cloud project (Security \-\> API Tokens). Grant it **Read & Write** permissions. Store this token securely.  
-3. **SSH Key:** Add your public SSH key to your Hetzner project (Security \-\> SSH Keys).  
-4. **Local Tools:** Install `kubectl` (the Kubernetes command-line tool) on your local machine. Optionally, install `helm`.
+2. **Local Tools:** `kubectl` (the Kubernetes command-line tool) installed on your local machine. Optionally, install `helm`.
 
 
 ## 1. Creating a new project
@@ -18,9 +13,14 @@ We started off by creating a new could project. I Hetzner this is quite straight
 ![New project 1](Pictures/Hetzner_cloud/Hetzner_cloud_new_project.png)
 ![New project 1](Pictures/Hetzner_cloud/Hetzner_cloud_new_project_name.png)
 
-## 2. Setting up infrastructure for the new project
+### 1.1 Enable connectivity
 
-**Quick notes**
+1. **SSH Key** 
+    * Add the needed public SSH keys to the Hetzner project (Security \-\> SSH Keys). 
+2. **API Token** 
+    * Generate an API token within the Hetzner Cloud project (Security \-\> API Tokens). Grant it **Read & Write** permissions. Store this token securely.  
+
+## 2. Setting up infrastructure for the new project
 
 **Use Hetzner Cloud Console in the project**  
 
@@ -50,32 +50,15 @@ We started off by creating a new could project. I Hetzner this is quite straight
 
 ![New project 1](Pictures/Hetzner_cloud/Hetzner_cloud_project_instances.png)
 
-## 3. Preparing Kubernetes deployment
+## 3 Start Kubernetes deployment
+
+Now that we have are infrastructure setup, we can start installing Kubernetes and deploying the cluster.
+
+### 3.1.1 Install Kubernetes control plane 
 
 Install K3s in the k8s-control-plane-1 machine. 
+In this case we use the [install_K3s_server](scripts/install_K3s_server.sh) script.
 
-```
-curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --flannel-iface=enp7s0 --node-ip="10.0.0.2" --node-external-ip=$(curl -4 ifconfig.me)" sh -s -
-```
+### 3.1.2 Install Kubernetes control plane 
 
-### Notes on shell script (Note piping "|")
-
-* ```curl -sfL https://get.k3s.io```
-  * This downloads the official K3s installation script from the internet
-  * Curl flags
-    * silent (-s)
-    * fail silently on server errors (-f)
-    * follow redirects (-L)
-* INSTALL_K3S_EXEC
-  * Environment variable for K3s installation script downloaded
-  * Server
-    * Installs K3s in server (control-plane) mode
-  * --flannel-iface=enp7s0
-    * Tells Flannel (the default CNI(Container Network Interface)) what network interface to use for cluster networking.
-      * In this case the interface is enp7s0
-  * --node-ip="10.0.0.2"
-    * Sets the internal IP address K3s advertises for this node
-  * --node-external-ip=$(curl -4 ifconfig.me)
-    * Sets the external IP address K3s advertises
-      * ```curl -4 ifconfig.me``` fetches the public IP address of the server.
-        * **Note**, -4 flag specifies IPV4 type address
+## 4. 
