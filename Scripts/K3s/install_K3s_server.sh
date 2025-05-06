@@ -12,7 +12,7 @@ fi
 echo "Using IP ${CONTROL_PLANE_PRIVATE_IP} for interface ${CONTROL_PLANE_IFACE}"
 
 # Install K3s
-curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --flannel-iface=${CONTROL_PLANE_IFACE} --node-ip=${CONTROL_PLANE_PRIVATE_IP} --node-external-ip=$(curl -s -4 ifconfig.me)" sh -s -
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --cloud-provider=external --flannel-iface=${CONTROL_PLANE_IFACE} --node-ip=${CONTROL_PLANE_PRIVATE_IP} --node-external-ip=$(curl -s -4 ifconfig.me)" sh -s -
 
 # Installation script
 
@@ -32,6 +32,9 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --flannel-iface=${CONTRO
 #     - Installs K3s in server (control-plane) mode
 #
 #   Flags
+#   --cloud-provider=external
+#     - Tells the K3s installation that we are going to use cloud providers tools, Hetzner in this case.
+#
 #   --flannel-iface
 #     - Tells Flannel (the default CNI(Container Network Interface)) what network interface to use for cluster networking.
 #
