@@ -1,7 +1,7 @@
 #!/bin/bash
 CONTROL_PLANE_PRIVATE_IP="10.0.0.2" # Use the private IP of k8s-control-plane-1
 WORKER_IFACE="enp7s0" # Add the interface to the Kubernetes network ( Note, that in our case, this is a private network)  
-K3S_TOKEN="K10710c533b547ed0bd9835aeb9839b33a70bb6659bf8d46295630167e2557bb30e::server:440ec043c26466da3e199dfce392be07" # Use the K3S token ("note-toke") from the control plane
+K3S_TOKEN="K10aed0aad95212e92e7ba4d6c890ebbddc50510887896736315d37518985ef1bce::server:0d58c2f1da4eb258fabc53654bfa283a" # Use the K3S token ("note-toke") from the control plane
 WORKER_PRIVATE_IP=$(ip -4 addr show ${WORKER_IFACE} | grep -oP '(?<=inet\s)\d+(\.\d+){3}') # Get the IPV address from the interface.
 
 # Check if IP was found on the interface
@@ -14,7 +14,7 @@ echo "Using IP ${WORKER_PRIVATE_IP} for interface ${WORKER_IFACE}"
 
 # Install K3s
 
-curl -sfL https://get.k3s.io | K3S_URL=https://${CONTROL_PLANE_PRIVATE_IP}:6443 K3S_TOKEN=${K3S_TOKEN} INSTALL_K3S_EXEC="agent --cloud-provider=external --flannel-iface=${WORKER_IFACE} --node-ip=${WORKER_PRIVATE_IP} --node-external-ip=$(curl -s -4 ifconfig.me)" sh -s -
+curl -sfL https://get.k3s.io | K3S_URL=https://${CONTROL_PLANE_PRIVATE_IP}:6443 K3S_TOKEN=${K3S_TOKEN} INSTALL_K3S_EXEC="agent --kubelet-arg="cloud-provider=external" --flannel-iface=${WORKER_IFACE} --node-ip=${WORKER_PRIVATE_IP} --node-external-ip=$(curl -s -4 ifconfig.me)" sh -s -
 
 # Installation script
 

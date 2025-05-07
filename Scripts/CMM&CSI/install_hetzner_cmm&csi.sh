@@ -20,4 +20,4 @@ helm install hcloud-csi hcloud/hcloud-csi -n kube-system
 kubectl get pods -n kube-system -l app.kubernetes.io/name=hcloud-cloud-controller-manager
 kubectl get pods -n kube-system -l app.kubernetes.io/name=hcloud-csi
 
-helm upgrade hcloud-ccm hcloud/hcloud-cloud-controller-manager -n kube-system --set networking.enabled=true --set networking.clusterCIDR="10.42.0.0/16"
+#helm upgrade hcloud-ccm hcloud/hcloud-cloud-controller-manager -n kube-system --set networking.enabled=true --set networking.clusterCIDR="10.42.0.0/16"

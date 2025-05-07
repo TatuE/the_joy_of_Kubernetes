@@ -12,7 +12,7 @@ fi
 echo "Using IP ${CONTROL_PLANE_PRIVATE_IP} for interface ${CONTROL_PLANE_IFACE}"
 
 # Install K3s
-curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --cloud-provider=external --flannel-iface=${CONTROL_PLANE_IFACE} --node-ip=${CONTROL_PLANE_PRIVATE_IP} --node-external-ip=$(curl -s -4 ifconfig.me)" sh -s -
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --kubelet-arg="cloud-provider=external" --flannel-iface=${CONTROL_PLANE_IFACE} --node-ip=${CONTROL_PLANE_PRIVATE_IP} --node-external-ip=$(curl -s -4 ifconfig.me)" sh -s -
 
 # Installation script
 

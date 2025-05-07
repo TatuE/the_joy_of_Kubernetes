@@ -3,7 +3,7 @@
 ## *Prerequisites*
 
 1. **Hetzner Cloud Account:** You need an active account 
-2. **Local Tools:** `kubectl` (the Kubernetes command-line tool) installed on your local machine. Optionally, install `helm`.
+2. **Local Tools:** `kubectl` (the Kubernetes command-line tool) and helm (package manager for Kubernetes) installed on your local machine.
 
 
 ## 1. Creating a new project
@@ -53,6 +53,14 @@ We started off by creating a new could project. I Hetzner this is quite straight
 ## 3 Start Kubernetes deployment
 
 Now that we have are infrastructure setup, we can start installing Kubernetes and deploying the cluster.
+
+before we did anything, we updated the virtual machines.
+* use ssh to connect to the machines
+* Note, since this is a bare machine, the only user accessible is ``root``.  
+* Update packages ``apt-get update``
+* Upgrade packages ``apt-get upgrade``
+
+Once this was done, we could begin the K3S installation.
 
 ### 3.1.1 Install Kubernetes control plane
 
