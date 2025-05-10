@@ -1,85 +1,96 @@
 ```mermaid
-graph LR
-    subgraph "Internet User"
-        U["User Browser/Client"]
+graph TD
+    subgraph Your Environment
+        Laptop["Your Laptop (kubectl, helm)"]
     end
 
-    subgraph "Hetzner Cloud Project"
-        FW("Hetzner Firewall")
-        subgraph "Hetzner Load Balancers"
-            LB_Nginx["Hetzner LB for Nginx"]
-            LB_Echo["Hetzner LB for Echo"]
-            LB_Traefik["Hetzner LB for Traefik"]
-        end
-        subgraph "Hetzner Private Network (k8s-net, 10.0.0.0/16)"
-            subgraph "k8s-control-plane-1 (Hetzner Server)"
-                K3S_Server["k3s Server - API etc."]
-                CCM["HCloud CCM Pod"]
-                CSI_Ctrl["HCloud CSI Ctrl Pod"]
-            end
-            subgraph "k8s-worker-1 (Hetzner Server)"
-                K3S_Agent1["k3s Agent"]
-                CSI_Node1["HCloud CSI Node Pod"]
-                subgraph "Pods on Worker 1"
-                    NginxPod1("Nginx Pod 1")
-                    RedisPod("Redis Pod") --- PV1[("Hetzner Volume via PVC")]
-                    EchoPod1("Echo Pod 1") --- CM1[("ConfigMap")]
-                    HelloAppPod("Hello App Pod")
-                end
-            end
-            subgraph "k8s-worker-2 (Hetzner Server)"
-                K3S_Agent2["k3s Agent"]
-                CSI_Node2["HCloud CSI Node Pod"]
-                 subgraph "Pods on Worker 2"
-                    NginxPod2("Nginx Pod 2")
-                    EchoPod2("Echo Pod 2") --- CM1
-                    HolaAppPod("Hola App Pod")
-                end
-            end
-        end
-        subgraph "Hetzner Volumes"
-            PV1
-        end
-        subgraph "Kubernetes Services/Ingress"
-            Svc_Nginx["Service: nginx-service<br>Type: LoadBalancer"]
-            Svc_Echo["Service: echo-service<br>Type: LoadBalancer"]
-            Svc_Redis["Service: redis-service<br>Type: ClusterIP"]
-            Svc_Hello["Service: hello-app-service<br>Type: ClusterIP"]
-            Svc_Hola["Service: hola-app-service<br>Type: ClusterIP"]
-            Ingress["Ingress: example-ingress<br>Controller: Traefik"]
-        end
-
-        %% Connections %%
-        U --> FW
-        FW --> LB_Nginx
-        FW --> LB_Echo
-        FW --> LB_Traefik
-
-        LB_Nginx --> Svc_Nginx
-        LB_Echo --> Svc_Echo
-        LB_Traefik --> Ingress
-
-        Svc_Nginx --> NginxPod1 & NginxPod2
-        Svc_Echo --> EchoPod1 & EchoPod2
-        RedisPod --> Svc_Redis
-
-        Ingress -- "/hello" --> Svc_Hello
-        Ingress -- "/hola" --> Svc_Hola
-        Svc_Hello --> HelloAppPod
-        Svc_Hola --> HolaAppPod
-
-        %% Control Plane / Node Communication %%
-        K3S_Server <--> K3S_Agent1 & K3S_Agent2
-        K3S_Server --- CCM & CSI_Ctrl & CSI_Node1 & CSI_Node2
-
-        %% Hetzner Integration %%
-        CCM --> LB_Nginx & LB_Echo & LB_Traefik
-        CSI_Ctrl & CSI_Node1 & CSI_Node2 --> PV1
+    subgraph Internet
+        User["Internet User"]
+        DNS_Hello["DNS: hello-world-k3s.erkinjuntti.eu --> LB_IP"]
+        DNS_Joy["DNS: joy.erkinjuntti.eu --> LB_IP"]
     end
 
-    style FW fill:#f9f,stroke:#333,stroke-width:2px
-    style LB_Nginx fill:#ccf,stroke:#333,stroke-width:1px
-    style LB_Echo fill:#ccf,stroke:#333,stroke-width:1px
-    style LB_Traefik fill:#ccf,stroke:#333,stroke-width:1px
-    style PV1 fill:#fcc,stroke:#333,stroke-width:1px
+    subgraph Hetzner Cloud
+        Firewall["Hetzner Firewall (k3s-firewall-1)"]
+        LB["Hetzner Load Balancer (95.217.170.60)"]
+        GitHubRepo["GitHub Repo: TatuE/the_joy_of_Kubernetes_site"]
+        HetznerCloudVolumes[(Hetzner Cloud Volumes - NOT IN USE WITH THIS SETUP)]
+
+        subgraph K3s Cluster on Private Network ["k3s-private-network: 10.0.0.0/16"]
+            CP["k3s-control-plane-1 (10.0.0.2)"]
+            W1["k3s-worker-1 (10.0.0.3)"]
+            W2["k3s-worker-2 (10.0.0.4)"]
+
+            subgraph CP ["Control Plane Node"]
+                K3sServer["K3s Server"]
+                CCMPod["Hetzner CCM Pod"]
+                CSICtrlPod["Hetzner CSI Controller Pod"]
+                CSINodePodCP["Hetzner CSI Node Pod"]
+            end
+
+            subgraph W1 ["Worker Node 1"]
+                K3sAgent1["K3s Agent"]
+                CSINodePodW1["Hetzner CSI Node Pod"]
+                HelloPod1["Hello World Pod"]
+                JoyPod1["Joy of K8s Pod (Nginx + Git Clone Init)"]
+            end
+
+            subgraph W2 ["Worker Node 2"]
+                K3sAgent2["K3s Agent"]
+                CSINodePodW2["Hetzner CSI Node Pod"]
+                HelloPod2["Hello World Pod"]
+                JoyPod2["Joy of K8s Pod (Nginx + Git Clone Init)"]
+            end
+
+            subgraph KSC ["Kubernetes Services/Controllers"]
+                TraefikPods["Traefik Ingress Pods"]
+                LetsEncrypt["Let's Encrypt for SSL"]
+
+                subgraph HWA ["Hello World App"]
+                    HelloIngressRoute["IngressRoute: hello-world-k3s.erkinjuntti.eu"]
+                    HelloService["Hello World Service (ClusterIP)"]
+                    HelloDeployment["Hello World Deployment"]
+                end
+
+                subgraph JKA ["Joy of Kubernetes App"]
+                    JoyIngressRoute["IngressRoute: joy.erkinjuntti.eu"]
+                    JoyService["Joy of K8s Service (ClusterIP)"]
+                    JoyDeployment["Joy of K8s Deployment"]
+                end
+            end
+        end
+    end
+
+    %% Connections
+    Laptop --> |Manages via Public IP| CP(K3s API on 157.180.74.180:6443)
+    User --> DNS_Hello
+    User --> DNS_Joy
+    DNS_Hello --> LB
+    DNS_Joy --> LB
+    LB --> Firewall
+    Firewall --> TraefikPods
+
+    TraefikPods --> LetsEncrypt
+    TraefikPods --> HelloIngressRoute
+    HelloIngressRoute --> HelloService
+    HelloService --> HelloDeployment
+    HelloDeployment --> HelloPod1
+    HelloDeployment --> HelloPod2
+
+    TraefikPods --> JoyIngressRoute
+    JoyIngressRoute --> JoyService
+    JoyService --> JoyDeployment
+    JoyDeployment --> JoyPod1
+    JoyDeployment --> JoyPod2
+    JoyPod1 --> |Init: git clone| GitHubRepo
+    JoyPod2 --> |Init: git clone| GitHubRepo
+
+    CP --> |K3s Internal Comm| W1
+    CP --> |K3s Internal Comm| W2
+
+    CCMPod --> |Hetzner API| LB(Manages LB)
+    CSICtrlPod --> |Hetzner API| HetznerCloudVolumes
+    CSINodePodCP --> HetznerCloudVolumes
+    CSINodePodW1 --> HetznerCloudVolumes
+    CSINodePodW2 --> HetznerCloudVolumes
 ```
