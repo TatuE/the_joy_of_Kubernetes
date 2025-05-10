@@ -1,23 +1,22 @@
 #Note: Z shell (zhs) is default shell in macos
 #!/bin/zhs
 
-# Reassign the Kubernetes configuration if needed
-# export KUBECONFIG=/Users/tatu.erkinjuntti/Development/Repositories/the_joy_of_Kubernetes/Kubernetes_configuration_files/K3s.yaml
-
 # Create secret
-kubectl -n kube-system create secret generic hcloud --from-literal=token=McOZhZPk6GK3d8gkJBKtZL77nM3eoOLxbY3MHtVqlylARs8bJBbAh6GgEijWmvOn --from-literal=network='10953262'
+kubectl kubectl apply -f hcloud-secret.yaml
+
+# import repo
+helm repo add hetzner https://charts.hetzner.cloud
+helm repo update
 
 # Install CCM
-helm repo add hcloud https://charts.hetzner.cloud
-helm repo update
-helm install hcloud-ccm hcloud/hcloud-cloud-controller-manager -n kube-system --set networking.enabled=true --set networking.clusterCIDR="10.42.0.0/16"
+helm install hcloud-ccm hetzner/hcloud-cloud-controller-manager --namespace kube-system --set networking.enabled=true --set hcloud.secretName=hcloud
 
 # Install CSI
-helm install hcloud-csi hcloud/hcloud-csi -n kube-system
+helm install hcloud-csi hetzner/hcloud-csi --namespace kube-system --set global.hcloud.secretName=hcloud
 
 # Check installation
-
+# CCM
 kubectl get pods -n kube-system -l app.kubernetes.io/name=hcloud-cloud-controller-manager
-kubectl get pods -n kube-system -l app.kubernetes.io/name=hcloud-csi
 
-#helm upgrade hcloud-ccm hcloud/hcloud-cloud-controller-manager -n kube-system --set networking.enabled=true --set networking.clusterCIDR="10.42.0.0/16"
+# CSI
+kubectl get pods -n kube-system -l app.kubernetes.io/name=hcloud-csi
