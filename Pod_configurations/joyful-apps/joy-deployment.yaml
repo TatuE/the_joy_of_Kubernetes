@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: joy-of-kubernetes-deployment
+  namespace: joyful-apps
+  labels:
+    app: joy-of-kubernetes
+spec:
+  replicas: 2 # You can adjust the number of replicas
+  selector:
+    matchLabels:
+      app: joy-of-kubernetes
+  template:
+    metadata:
+      labels:
+        app: joy-of-kubernetes
+    spec:
+      # This initContainer will clone your GitHub repo content
+      initContainers:
+      - name: git-cloner
+        image: alpine/git # A small image with git installed
+        args:
+          - clone
+          - --single-branch # Clones only the default branch (usually main or master)
+          - --depth
+          - "1" # Clones only the latest commit to save space and time
+          - https://github.com/TatuE/the_joy_of_Kubernetes_site.git # YOUR GITHUB REPO URL
+          - /usr/share/nginx/html # Target directory for clone (Nginx webroot)
+        volumeMounts:
+        - name: static-site-content # Mount the shared volume
+          mountPath: /usr/share/nginx/html
+      # This is your main Nginx container
+      containers:
+      - name: joy-of-kubernetes-site
+        image: nginx:alpine # Standard lightweight Nginx image
+        ports:
+        - containerPort: 80 # Nginx serves on port 80 by default
+        volumeMounts:
+        - name: static-site-content # Mount the shared volume where git cloned the files
+          mountPath: /usr/share/nginx/html # Nginx serves from here
+          readOnly: true # Nginx only needs to read the content cloned by the initContainer
+      # Define the shared volume that both initContainer and Nginx container will use
+      volumes:
+      - name: static-site-content
+        emptyDir: {} # An emptyDir volume is created when a Pod is assigned to a Node
+                     # and exists as long as that Pod is running on that node.
+                     # Its content is populated by the initContainer.

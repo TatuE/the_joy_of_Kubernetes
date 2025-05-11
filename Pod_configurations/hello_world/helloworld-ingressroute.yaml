@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: helloworld-ingressroute
+  namespace: helloworld
+spec:
+  entryPoints:
+    - websecure # Use the HTTPS entrypoint
+  routes:
+    - match: Host(`hello-world-k3s.erkinjuntti.eu`)
+      kind: Rule
+      services:
+        - name: helloworld-service
+          port: 80
+  tls:
+    certResolver: myresolver # This must match the name of the resolver configured in Traefik
+    domains:
+      - main: "hello-world-k3s.erkinjuntti.eu" # Primary domain for the certificate

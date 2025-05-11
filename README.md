@@ -6,13 +6,14 @@ A working repository for Haaga-Helia Cloud Services (ICT4HM101-3007) course proj
 
 The plan is to set up a Kubernetes cluster using k3s on Hetzner Cloud, deploy test applications.
 
+**Note** Since this was our first time deploying a Kubernetes cluster, we had to redo the cluster creation several times to reach the outcome detailed in this report. Major problems that occurred are noted and detailed in this document but done so in a way that they fit the narrative of this report.
+
 ## Setting up Hetzner Cloud
 
 ## *Prerequisites*
 
 1. **Hetzner Cloud Account:** You need an active account 
 2. **Local Tools:** `kubectl` (the Kubernetes command-line tool) and `helm` (package manager for Kubernetes) installed on your local machine.
-
 
 ### 1. Creating a new project
 
@@ -23,14 +24,14 @@ We started off by creating a new could project. I Hetzner this is quite straight
 
 #### 1.1 Enable connectivity
 
-1. **SSH Key** 
+1. **SSH Key**
     * Add the needed public SSH keys to the Hetzner project (Security \-\> SSH Keys). 
-2. **API Token** 
+2. **API Token**
     * Generate an API token within the Hetzner Cloud project (Security \-\> API Tokens). Grant it **Read & Write** permissions. Store this token securely.  
 
 ### 2. Setting up infrastructure for the new project
 
-**Use Hetzner Cloud Console in the project**  
+**We used Hetzner Cloud Console for setting up our infrastructure**  
 
 1. **Create 3 Cloud Servers (1 control-plane, 2 workers)**
     * **Location:** Helsinki (hel1)  
@@ -63,7 +64,8 @@ We started off by creating a new could project. I Hetzner this is quite straight
 Now that we have are infrastructure setup, we can start installing Kubernetes and deploying the cluster.
 
 before we did anything, we updated the virtual machines.
-* use ssh to connect to the machines
+
+* use ssh to connect to the machines.
 * Note, since this is a bare machine, the only user accessible is ``root``.  
 * Update packages ``apt-get update``
 * Upgrade packages ``apt-get upgrade``
@@ -170,7 +172,21 @@ At this point we already knew what charts we needed, but this can be checked by 
 
 The charts we needed were "hcloud-csi" and "hcloud-cloud-controller-manager".
 
-We made a [shell script](Scripts/CMM&CSI/install_hetzner_cmm&csi.sh) that runs the needed commands.
+We made a [shell script](Scripts/CMM&CSI/install_hetzner_cmm&csi.sh) that runs the needed commands. **Note** the script also checks that the services are running.
+
+#### Problems with K3s build in Traefik Ingress Controller when using Hetzner CCM
+
+During our our project we encountered a problem when using the K3S build in Traefik service with the Hetzner CCM. Until the pod deployment everything seemed to be in order, but once we deployed our pods and the associated services, automatic network routing did not happen between the load balancer and the deployments in the private network.
+
+This problem took a while to resolve and we ended up redeploying the whole cluster twice (at least), but in the end we found that by setting up the K3S without the build in Traefik (flaggs `--disable=traefik`and  `--disable=servicelb` in the install_K3s_server.sh script) and by manually installing the Traefik services we could get it to work.
+
+As before, we created an [installation script](Scripts/Traefik/install_traefik.sh) for this.  
+Once the installation script was done, we waited for a moment for the Hetzner CCM to pick it up and checked if the service running by using the commands:
+
+* `kubectl get pods -n traefik -l app.kubernetes.io/name=traefik` for status
+* `kubectl get svc -n traefik traefik` to check if the  Hetzner CCM to provision the LoadBalancer and for Hetzner to assign IP's to it
+
+Since we were a bit skeptical at this point, we also used the `kubectl logs -n traefik -l app.kubernetes.io/name=traefik` command to check for possible errors.
 
 ### Hetzner Kubernetes schematic
 
