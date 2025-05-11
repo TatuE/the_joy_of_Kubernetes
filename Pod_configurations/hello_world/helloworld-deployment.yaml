@@ -2,11 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: helloworld-deployment
-  namespace: helloworld # Or your preferred namespace, e.g., default
+  namespace: helloworld # Obviously the first name for a deployment
   labels:
     app: helloworld
 spec:
-  replicas: 2 # Start with two instances
+  replicas: 2 # Two instances
   selector:
     matchLabels:
       app: helloworld

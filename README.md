@@ -59,7 +59,7 @@ We started off by creating a new could project. I Hetzner this is quite straight
 
 ![New project 1](Pictures/Hetzner_cloud/Hetzner_cloud_project_instances.png)
 
-### 3 Start Kubernetes deployment
+### 3 Kubernetes deployment
 
 Now that we have are infrastructure setup, we can start installing Kubernetes and deploying the cluster.
 
@@ -156,7 +156,7 @@ To create the secret, we used `kubectl` to generate it.
 
 `kubectl apply -f hcloud-secret.yaml`
 
-#### Installing CCM and CSI
+#### 3.4.2 Installing CCM and CSI
 
 Once we have the secret created, we could start installing the CCM ans CSI in to the `kube-system` namespace. We used `helm charts` for this.
 
@@ -174,7 +174,7 @@ The charts we needed were "hcloud-csi" and "hcloud-cloud-controller-manager".
 
 We made a [shell script](Scripts/CMM&CSI/install_hetzner_cmm&csi.sh) that runs the needed commands. **Note** the script also checks that the services are running.
 
-#### Problems with K3s build in Traefik Ingress Controller when using Hetzner CCM
+#### Problems with K3s build in Traefik services when using Hetzner CCM
 
 During our our project we encountered a problem when using the K3S build in Traefik service with the Hetzner CCM. Until the pod deployment everything seemed to be in order, but once we deployed our pods and the associated services, automatic network routing did not happen between the load balancer and the deployments in the private network.
 
@@ -188,7 +188,31 @@ Once the installation script was done, we waited for a moment for the Hetzner CC
 
 Since we were a bit skeptical at this point, we also used the `kubectl logs -n traefik -l app.kubernetes.io/name=traefik` command to check for possible errors.
 
+Once we were certain (or at least hopeful) that everything should be ready for application deployment, we started by deploying a simple web application.
+
+### 3 Kubernetes application deployment
+
+In our projects scope, we are mainly interested in four(4) aspects of Kubernetes for deploying applications, these are:
+
+* Pods
+* Deployments
+* Services
+* IngressRoute
+
+#### 3.1 Pods
+
+Pods represent the smallest deployable unit in Kubernetes. They represent a single instance (application) of one or more containers, a single pod and the containers within it share the same resources and are always associated to the same worker node.
+
+#### 3.2 Deployments
+
+A deployment is used to manage and scale pods. Deployments declare the desired state of the pod (pods if there are replicas), this often include how many replicas of the pod are to be deployed. Deployments also ease updating and the lifecycle management of deployed pods.
+
+#### 3.3 Services
+
+Services provide an abstraction layer for the deployments, providing a stable network end point and loadbalancing for them.
+
 ### Hetzner Kubernetes schematic
+
 
 *Note, the schematic is done using [mermaid](https://mermaid.js.org/)*
 

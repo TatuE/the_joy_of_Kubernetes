@@ -29,8 +29,6 @@ if [ -z "${WORKER_PUBLIC_IP}" ]; then
 fi
 
 # Continue if everything is in check.
-
-
 echo "--- K3s Worker Agent Installation Parameters ---"
 echo "Worker Node Private Interface: ${WORKER_IFACE}"
 echo "Worker Node Private IP:        ${WORKER_PRIVATE_IP}"
@@ -39,9 +37,7 @@ echo "K3s Join Token:                ${K3S_TOKEN}"
 echo "Worker node external IP:       ${WORKER_PUBLIC_IP}"
 echo "----------------------------------------------"
 
-
 # Install K3s agent.
-
 echo "Starting K3s agent installation on this worker node..."
 curl -sfL https://get.k3s.io | \
     K3S_URL="https://${CONTROL_PLANE_PRIVATE_IP}:6443" \
