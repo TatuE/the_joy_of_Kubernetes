@@ -199,17 +199,49 @@ In our projects scope, we are mainly interested in four(4) aspects of Kubernetes
 * Services
 * IngressRoute
 
-#### 3.1 Pods
+#### Pods
 
 Pods represent the smallest deployable unit in Kubernetes. They represent a single instance (application) of one or more containers, a single pod and the containers within it share the same resources and are always associated to the same worker node.
 
-#### 3.2 Deployments
+#### Deployments
 
 A deployment is used to manage and scale pods. Deployments declare the desired state of the pod (pods if there are replicas), this often include how many replicas of the pod are to be deployed. Deployments also ease updating and the lifecycle management of deployed pods.
 
-#### 3.3 Services
+#### Services
 
 Services provide an abstraction layer for the deployments, providing a stable network end point and loadbalancing for them.
+
+#### IngressRoute
+
+IngressRoute provide more advanced ways to manage external HTTP/S access to services within a Kubernetes cluster. In it's simplest form, it can map host names and paths to the deployment.
+
+#### 3.1 First application deployment
+
+In our deployment we used all of these elements to deploy out first application. We selected a simple nginx hello application as a pod, defined the desired state and replicas in the deployment, mapped the internal IP access to the service for the load balancer with a service and defined the hostname mapping with the IngressRoute.
+
+We defined these in separate .yaml files and executed them in an order using `kubectl apply -f file.yaml`.  **Note** That since the pods are defined in the deployment, we do not need to specify them in a separately.
+The execution order was:
+
+1. [helloworld-deployment.yaml](Pod_configurations/hello_world/helloworld-deployment.yaml)
+    * Verify with `kubectl get pods -n helloworld -l app=helloworld`
+2. [helloworld-service.yaml](Pod_configurations/hello_world/helloworld-service.yaml)
+    * Verify with `kubectl get svc -n helloworld helloworld-service`
+3. [helloworld-ingressroute.yaml](Pod_configurations/hello_world/helloworld-ingressroute.yaml)
+    * Verify with `kubectl get ingressroute -n helloworld helloworld-ingressroute`
+
+Once we were sure that the application was running, we could check it pointing a browser to http://hello-world-k3s.erkinjuntti.eu. 
+
+![hello world](Pictures/Applications/nginx_helloworld.png)
+
+#### Traefik with SSL/TLS encryption
+
+Now at this point we were providing the application with out encryption (HTTP). Albeit it was a static page without any sensitive information, web browsers typically don't like unencrypted web sites and for this reason we decided to try an implement SSL/TLS encryption on it using Let's encrypt. Luckily Traefik offers guide an examples for this, and since we already had made a DNS entry for the application, we just needed to upgrade the previously installed Traefik service and modify the helloworld-ingressroute.yaml file. We made a separate [script for the Traefik upgrade](Scripts/Traefik/traefik_upgrade_https.sh)).
+
+Once the upgrade and ingressroute file modification was completed, we could access the application using HTTP (port 443).
+
+#### 3.2 Second application deployment
+
+
 
 ### Hetzner Kubernetes schematic
 

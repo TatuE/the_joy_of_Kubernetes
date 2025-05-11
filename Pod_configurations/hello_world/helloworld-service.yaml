@@ -2,14 +2,14 @@ apiVersion: v1
 kind: Service
 metadata:
   name: helloworld-service
-  namespace: helloworld # Must be the same namespace as the deployment
+  namespace: helloworld 
   labels:
     app: helloworld
 spec:
-  type: ClusterIP # Default type, exposes the service on an internal IP
+  type: ClusterIP 
   selector:
-    app: helloworld # This must match the labels of the pods in the deployment
+    app: helloworld 
   ports:
   - protocol: TCP
-    port: 80       # The port the service will be available on within the cluster
-    targetPort: 80 # The port the application container is listening on (from the deployment)
+    port: 80       
+    targetPort: 80 

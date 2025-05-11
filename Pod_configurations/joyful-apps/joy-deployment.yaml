@@ -6,7 +6,7 @@ metadata:
   labels:
     app: joy-of-kubernetes
 spec:
-  replicas: 2 # You can adjust the number of replicas
+  replicas: 2
   selector:
     matchLabels:
       app: joy-of-kubernetes
@@ -21,27 +21,25 @@ spec:
         image: alpine/git # A small image with git installed
         args:
           - clone
-          - --single-branch # Clones only the default branch (usually main or master)
+          - --single-branch # Clones only the default branch
           - --depth
           - "1" # Clones only the latest commit to save space and time
-          - https://github.com/TatuE/the_joy_of_Kubernetes_site.git # YOUR GITHUB REPO URL
-          - /usr/share/nginx/html # Target directory for clone (Nginx webroot)
+          - https://github.com/TatuE/the_joy_of_Kubernetes_site.git
+          - /usr/share/nginx/html 
         volumeMounts:
         - name: static-site-content # Mount the shared volume
           mountPath: /usr/share/nginx/html
-      # This is your main Nginx container
+      #Main Nginx container
       containers:
       - name: joy-of-kubernetes-site
-        image: nginx:alpine # Standard lightweight Nginx image
+        image: nginx:alpine 
         ports:
-        - containerPort: 80 # Nginx serves on port 80 by default
+        - containerPort: 80 
         volumeMounts:
-        - name: static-site-content # Mount the shared volume where git cloned the files
-          mountPath: /usr/share/nginx/html # Nginx serves from here
-          readOnly: true # Nginx only needs to read the content cloned by the initContainer
-      # Define the shared volume that both initContainer and Nginx container will use
+        - name: static-site-content 
+          mountPath: /usr/share/nginx/html 
+          readOnly: true 
+
       volumes:
       - name: static-site-content
-        emptyDir: {} # An emptyDir volume is created when a Pod is assigned to a Node
-                     # and exists as long as that Pod is running on that node.
-                     # Its content is populated by the initContainer.
+        emptyDir: {} 

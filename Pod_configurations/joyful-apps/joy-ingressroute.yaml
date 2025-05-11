@@ -5,14 +5,14 @@ metadata:
   namespace: joyful-apps
 spec:
   entryPoints:
-    - websecure # Use the HTTPS entrypoint
+    - websecure 
   routes:
-    - match: Host(`joy.erkinjuntti.eu`) # Your chosen hostname
+    - match: Host(`joy.erkinjuntti.eu`)
       kind: Rule
       services:
         - name: joy-of-kubernetes-service # Matches the Service name above
           port: 80                         # Matches the Service port above
   tls:
-    certResolver: myresolver # Your Let's Encrypt resolver configured in Traefik
+    certResolver: myresolver 
     domains:
-      - main: "joy.erkinjuntti.eu" # Primary domain for the SSL certificate
+      - main: "joy.erkinjuntti.eu" 

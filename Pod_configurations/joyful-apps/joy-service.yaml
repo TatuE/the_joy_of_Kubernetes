@@ -8,8 +8,8 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: joy-of-kubernetes # This must match the labels of the pods in your Deployment
+    app: joy-of-kubernetes 
   ports:
   - protocol: TCP
-    port: 80       # The port the service will be available on within the cluster
-    targetPort: 80 # The port the Nginx container is listening on
+    port: 80      
+    targetPort: 80 
