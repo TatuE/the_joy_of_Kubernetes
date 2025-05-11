@@ -1,7 +1,7 @@
 ```mermaid
 graph TD
     subgraph Your Environment
-        Laptop["Your Laptop (kubectl, helm)"]
+        Laptop["Admin computer (kubectl, helm)"]
     end
 
     subgraph Internet
@@ -32,14 +32,14 @@ graph TD
                 K3sAgent1["K3s Agent"]
                 CSINodePodW1["Hetzner CSI Node Pod"]
                 HelloPod1["Hello World Pod"]
-                JoyPod1["Joy of K8s Pod (Nginx + Git Clone Init)"]
+                JoyPod1["Joy of Kubernetes Pod (Nginx + Git Clone Init)"]
             end
 
             subgraph W2 ["Worker Node 2"]
                 K3sAgent2["K3s Agent"]
                 CSINodePodW2["Hetzner CSI Node Pod"]
                 HelloPod2["Hello World Pod"]
-                JoyPod2["Joy of K8s Pod (Nginx + Git Clone Init)"]
+                JoyPod2["Joy of Kubernetes Pod (Nginx + Git Clone Init)"]
             end
 
             subgraph KSC ["Kubernetes Services/Controllers"]
