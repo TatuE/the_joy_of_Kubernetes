@@ -222,11 +222,13 @@ In our deployment we used all of these elements to deploy out first application.
 We defined these in separate .yaml files and executed them in an order using `kubectl apply -f file.yaml`.  **Note** That since the pods are defined in the deployment, we do not need to specify them in a separately.
 The execution order was:
 
-1. [helloworld-deployment.yaml](Pod_configurations/hello_world/helloworld-deployment.yaml)
+1. Create a namespace for the application
+    * `kubectl create namespace helloworld`
+2. [helloworld-deployment.yaml](Pod_configurations/hello_world/helloworld-deployment.yaml)
     * Verify with `kubectl get pods -n helloworld -l app=helloworld`
-2. [helloworld-service.yaml](Pod_configurations/hello_world/helloworld-service.yaml)
+3. [helloworld-service.yaml](Pod_configurations/hello_world/helloworld-service.yaml)
     * Verify with `kubectl get svc -n helloworld helloworld-service`
-3. [helloworld-ingressroute.yaml](Pod_configurations/hello_world/helloworld-ingressroute.yaml)
+4. [helloworld-ingressroute.yaml](Pod_configurations/hello_world/helloworld-ingressroute.yaml)
     * Verify with `kubectl get ingressroute -n helloworld helloworld-ingressroute`
 
 Once we were sure that the application was running, we could check it pointing a browser to http://hello-world-k3s.erkinjuntti.eu. 
@@ -241,11 +243,39 @@ Once the upgrade and ingressroute file modification was completed, we could acce
 
 #### 3.2 Second application deployment
 
+Since we had major problems with the K3S load balancer within the Hetzner cloud and time reserved for this project was limited, we decided to deploy a second and last application that would also be a web page. Since we wanted it to have more content than just a nginx landing page, we generated an image using Googles Gemini AI and wrote a small html file to tell the tale of our project. 
+
+At this phase we were at odds on how to deploy this. One way could have been to make a container of it using Docker but we found that the most visibly appealing method would be to create a public repository for the web page and use a init container to clone it to a nginx pod. This was done for purely reputational reasons, once the Kubernetes cluster goes down, there would still be "evidence" of the website used.
+
+joy.erkinjuntti.eu was selected for the hostname of the second application.
+
+We used the previous application deployment as a template. We modified the deployment.yaml file for the initcontainer and after this the deployment followed the same steps as with the previous application deployment :
 
 
-### Hetzner Kubernetes schematic
+1. Create a namespace for the application
+    * `kubectl create namespace joyful-apps`
+2. [kubectl apply -f oy-deployment.yaml](Pod_configurations/joyful-apps/joy-deployment.yaml)
+    * Verify with `kubectl get pods -n joyful-apps -l app=joyful-apps`
+3. [kubectl apply -f joy-service.yaml](Pod_configurations/joyful-apps/joy-service.yaml)
+    * Verify with `kubectl get svc -n joyful-apps joy-of-kubernetes-service`
+4. [kubectl apply -f joy-ingressroute.yaml](Pod_configurations/joyful-apps/joy-ingressroute.yaml)
+    * Verify with `kubectl get ingressroute -n joyful-apps joy-of-kubernetes-ingressroute`
 
+Once we were sure that the application was running, we could check it pointing a browser to http://hello-world-k3s.erkinjuntti.eu.
+
+![the joy of Kubernetes](Pictures/Applications/The_joy_of_kubernetes_site.png)
+
+### 4 The Kubernetes cluster
+
+When we started this project, we envisioned building a Kubernetes cluster with multiple interlocking applications. Since this was our first try at Kubernetes and we encountered problems integrating K3s with Hetzner, we ended up deploying a cluster with two services.
+All in all, we are pleased with out project as we could implement a functional cluster using load balancing, ingress routing and using SSL certificates. We originally planned on using the Hetzner CSI for volume management, but as out deployments did not rely on it, we left it out of the deployment. In any case this is noted in the architectural design.
+
+#### Hetzner Kubernetes schematic
+
+The detailed, final architectural design of our Kubernetes cluster.
+
+![Kubernetes schematic](Pictures/Schematics/Hetzner_Kubernetes_diagram.png)
 
 *Note, the schematic is done using [mermaid](https://mermaid.js.org/)*
 
-[Hetzner Kubernetes schematic](Architecture/schematic.md)
+[Hetzner Kubernetes schematic in mermaid](Architecture/schematic.md)
