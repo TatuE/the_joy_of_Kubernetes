@@ -105,7 +105,7 @@ we copied the ks3.yaml configuration file (located at ``/etc/rancher/k3s/k3s.yam
 Once done, we refer [this .yaml file](Kubernetes_configuration_files/k3s.yaml) as the Kubernetes configuration for ``kubectl``.
 After this, we can check if we can connect to the Kubernetes cluster.
 
-![kubectl-check_cluster](Pictures/kubectl/Screenshot%202025-05-01%20at%2020.36.22.png)
+![kubectl-check_cluster](Pictures/kubectl/get_nodes.png)
 
 ### 3.4 Integrate Hetzner cloud features
 
@@ -150,7 +150,7 @@ In Kubernetes, namespaces provide a mechanism for isolating groups of resources 
 
 The secret can be created straight from the command line, or creating a .yaml file and using that as a reference on the commandline. We chose the later, because this .yaml file could be included as a reference on the projects repository.
 
-We created the file and named it [hcloud-secret.yaml](Tokens_and_Secrets/hcloud-secret.yaml). We chose the name `hcloud` for the secret, this will be referred to later in the installation.
+We created the file and named it [hcloud-secret.yaml](Scripts/CMM&CSI/hcloud-secret.yaml). We chose the name `hcloud` for the secret, this will be referred to later in the installation.
 
 To create the secret, we used `kubectl` to generate it.
 
@@ -237,7 +237,7 @@ Once we were sure that the application was running, we could check it pointing a
 
 #### Traefik with SSL/TLS encryption
 
-Now at this point we were providing the application with out encryption (HTTP). Albeit it was a static page without any sensitive information, web browsers typically don't like unencrypted web sites and for this reason we decided to try an implement SSL/TLS encryption on it using Let's encrypt. Luckily Traefik offers guide an examples for this, and since we already had made a DNS entry for the application, we just needed to upgrade the previously installed Traefik service and modify the helloworld-ingressroute.yaml file. We made a separate [script for the Traefik upgrade](Scripts/Traefik/traefik_upgrade_https.sh)).
+Now at this point we were providing the application with out encryption (HTTP). Albeit it was a static page without any sensitive information, web browsers typically don't like unencrypted web sites and for this reason we decided to try an implement SSL/TLS encryption on it using Let's encrypt. Luckily Traefik offers guide an examples for this, and since we already had made a DNS entry for the application, we just needed to upgrade the previously installed Traefik service and modify the [helloworld-ingressroute.yaml](Pod_configurations/hello_world/helloworld-ingressroute.yaml) file. We made a separate [script for the Traefik upgrade](Scripts/Traefik/traefik_upgrade_https.sh)).
 
 Once the upgrade and ingressroute file modification was completed, we could access the application using HTTP (port 443).
 
