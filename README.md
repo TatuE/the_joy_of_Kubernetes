@@ -75,7 +75,7 @@ Once this was done, we could begin the K3S installation.
 #### 3.1.1 Install Kubernetes control plane
 
 Install K3s in the k3s-control-plane-1 machine.
-In this case we use the [install_K3s_server](scripts/K3s/install_K3s_server.sh) script.
+In this case we use the [install_K3s_server](Scripts/K3s/install_K3s_server.sh) script.
 The easiest way was just to copy ``scp`` the shell script from the local machine to the virtual machine and make it and executable ``chmod -x``. 
 Once this is done, we just executed (``./install_K3s_server.sh``)the script and check the installation was performed without error.
 
