@@ -168,7 +168,7 @@ Before we could start the installation, we needed to add the helm repo containin
 
 At this point we already knew what charts we needed, but this can be checked by using the command `helm search repo hetzner`
 
-[Hetzner helm charts](Pictures/Helm/Hetzner%20helm%20charts.png)
+![Hetzner helm charts](Pictures/Helm/Hetzner%20helm%20charts.png)
 
 The charts we needed were "hcloud-csi" and "hcloud-cloud-controller-manager".
 
