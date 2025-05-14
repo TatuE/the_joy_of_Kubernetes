@@ -15,7 +15,7 @@ spec:
       labels:
         app: joy-of-kubernetes
     spec:
-      # This initContainer will clone your GitHub repo content
+      # This initContainer will clone the GitHub repo content
       initContainers:
       - name: git-cloner
         image: alpine/git # A small image with git installed
@@ -24,7 +24,7 @@ spec:
           - --single-branch # Clones only the default branch
           - --depth
           - "1" # Clones only the latest commit to save space and time
-          - https://github.com/TatuE/the_joy_of_Kubernetes_site.git # Git with the web sites
+          - https://github.com/TatuE/the_joy_of_Kubernetes_site.git # Git with the web site
           - /usr/share/nginx/html 
         volumeMounts:
         - name: static-site-content # Mount the shared volume
