@@ -2,7 +2,7 @@
 
 CONTROL_PLANE_PRIVATE_IP="10.0.0.2" # Use the private IP of k3s-control-plane-1
 
-WORKER_IFACE="enp7s0" # Add the interface to the Kubernetes network ( Note, that in our case, this is a private network)
+WORKER_IFACE="enp7s0" # Add the interface to the Kubernetes network ( Note, that in our case, this is the private network)
 
 K3S_TOKEN="K105485a8d35a6b8b80d9dd6d9c2d25e0001b1bf65716f093ebda9c2dbd144233d1::server:e7896e9f658d28dc2505c8f1b9c3d845" # Use the K3S token ("node-token") from the control plane
 
