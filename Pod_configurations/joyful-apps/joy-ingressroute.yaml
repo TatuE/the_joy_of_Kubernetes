@@ -10,8 +10,8 @@ spec:
     - match: Host(`joy.erkinjuntti.eu`)
       kind: Rule
       services:
-        - name: joy-of-kubernetes-service # Matches the Service name above
-          port: 80                         # Matches the Service port above
+        - name: joy-of-kubernetes-service
+          port: 80                        
   tls:
     certResolver: myresolver 
     domains:
