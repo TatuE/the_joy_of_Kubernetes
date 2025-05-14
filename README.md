@@ -261,7 +261,7 @@ We used the previous application deployment as a template. We modified the deplo
 4. [kubectl apply -f joy-ingressroute.yaml](Pod_configurations/joyful-apps/joy-ingressroute.yaml)
     * Verify with `kubectl get ingressroute -n joyful-apps joy-of-kubernetes-ingressroute`
 
-Once we were sure that the application was running, we could check it pointing a browser to http://hello-world-k3s.erkinjuntti.eu.
+Once we were sure that the application was running, we could check it pointing a browser to https://joy.erkinjuntti.eu/
 
 ![the joy of Kubernetes](Pictures/Applications/The_joy_of_kubernetes_site.png)
 
