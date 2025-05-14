@@ -24,7 +24,7 @@ spec:
           - --single-branch # Clones only the default branch
           - --depth
           - "1" # Clones only the latest commit to save space and time
-          - https://github.com/TatuE/the_joy_of_Kubernetes_site.git # Git with the web site
+          - https://github.com/TatuE/the_joy_of_Kubernetes_site.git # Git file with the web site
           - /usr/share/nginx/html 
         volumeMounts:
         - name: static-site-content # Mount the shared volume
